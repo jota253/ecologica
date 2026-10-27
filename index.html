@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoLógica: O Desafio da Sustentabilidade</title>
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --primary-dark: #1b5e20;
+      --secondary: #81c784;
+      --bg: #f4f6f8;
+      --card-bg: #ffffff;
+      --text: #212121;
+    
+      --accent: #f57c00; 
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    header h1 { margin: 0; font-size: 1.6rem; }
+    header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+    
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    h2 { color: var(--primary-dark); margin-top: 0; font-size: 1.3rem; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+    
+    /* Status da Cidade */
+    .dashboard {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .stat { text-align: center; flex: 1; }
+    .stat-val { font-size: 1.4rem; font-weight: bold; color: var(--primary-dark); }
+    .stat-label { font-size: 0.8rem; color: #555; }
+    
+    /* Jogo da Lixeira */
+    .bins {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .bin {
+      padding: 15px 5px;
+      border-radius: 8px;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s;
+    }
+    .bin:active { transform: scale(0.96); }
+    .bin-papel { background-color: #1e88e5; }
+    .bin-plastico { background-color: #e53935; }
+    .bin-vidro { background-color: #43a047; }
+    .bin-metal { background-color: #fdd835; color: #333; }
+    .bin-organico { background-color: #6d4c41; }
+    
+    .item-box {
+      background: #fff3e0;
+      border: 2px dashed var(--accent);
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    
+    /* Quiz */
+    .quiz-options button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+    }
+    .quiz-options button:active { background: #e0e0e0; }
+    
+    .feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      display: none;
+      font-size: 0.9rem;
+    }
+    .feedback.correct { background: #c8e6c9; color: #2e7d32; display: block; }
+    .feedback.wrong { background: #ffcdd2; color: #c62828; display: block; }
+    
+    /* Seção de Decomposição */
+    .timeline-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>EcoLógica: O Desafio da Sustentabilidade</h1>
+    <p>UFSC Campus Araranguá | Informática na Educação I</p>
+  </header>
+
+  <div class="container">
+    
+    <!-- Painel de Status da Cidade -->
+    <div class="card">
+      <h2>Painel da Cidade Virtual</h2>
+      <div class="dashboard">
+        <div class="stat">
+          <div class="stat-label">Saúde Ambiental</div>
+          <div class="stat-val" id="health-val">80%</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Pontuação</div>
+          <div class="stat-val" id="score-val">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Nível</div>
+          <div class="stat-val" id="level-val">1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Módulo 1: Triagem de Resíduos -->
+    <div class="card">
+      <h2>1. Triagem de Resíduos</h2>
+      <p style="font-size: 0.9rem; color: #555;">Selecione a lixeira correta para o item indicado abaixo:</p>
+      
+      <div class="item-box" id="current-item">Garrafa PET</div>
+
+      <div class="bins">
+        <div class="bin bin-papel" onclick="checkBin('papel')">PAPEL</div>
+        <div class="bin bin-plastico" onclick="checkBin('plastico')">PLÁSTICO</div>
+        <div class="bin bin-vidro" onclick="checkBin('vidro')">VIDRO</div>
+        <div class="bin bin-metal" onclick="checkBin('metal')">METAL</div>
+        <div class="bin bin-organico" onclick="checkBin('organico')">ORGÂNICO</div>
+      </div>
+      <div id="bin-feedback" class="feedback"></div>
+    </div>
+
+    <!-- Módulo 2: Quiz de Decisões Ecológicas -->
+    <div class="card">
+      <h2>2. Decisão Ecológica</h2>
+      <p id="quiz-question" style="font-weight: 500;">Qual a melhor atitude ao sair de um cômodo na escola?</p>
+      <div class="quiz-options" id="quiz-options">
+        <button onclick="checkQuiz(0)">Deixar as luzes acesas para a próxima turma.</button>
+        <button onclick="checkQuiz(1)">Apagar as luzes e desligar o ventilador/ar-condicionado.</button>
+        <button onclick="checkQuiz(2)">Apenas fechar a porta.</button>
+      </div>
+      <div id="quiz-feedback" class="feedback"></div>
+    </div>
+
+    <!-- Módulo 3: Linha do Tempo de Decomposição -->
+    <div class="card">
+      <h2>3. Linha do Tempo de Decomposição</h2>
+      <p style="font-size: 0.9rem; color: #555;">Tempo estimado de decomposição na natureza:</p>
+      <div class="timeline-item"><span>Casca de Banana</span><strong>1 a 3 meses</strong></div>
+      <div class="timeline-item"><span>Papel / Papelão</span><strong>2 a 6 meses</strong></div>
+      <div class="timeline-item"><span>Lata de Alumínio</span><strong>200 a 500 anos</strong></div>
+      <div class="timeline-item"><span>Garrafa Plástica (PET)</span><strong>Mais de 400 anos</strong></div>
+      <div class="timeline-item"><span>Vidro</span><strong>Mais de 1.000 anos</strong></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Protótipo Educacional - Acadêmico: João Francisco Bonotto</p>
+  </footer>
+
+  <script>
+    // Dados dos itens de triagem
+    const items = [
+      { name: "Garrafa PET", type: "plastico" },
+      { name: "Jornal Velho", type: "papel" },
+      { name: "Casca de Maçã", type: "organico" },
+      { name: "Lata de Refrigerante", type: "metal" },
+      { name: "Frasco de Perfume Quebrado", type: "vidro" },
+      { name: "Caixa de Papelão", type: "papel" }
+    ];
+
+    let currentItemIdx = 0;
+    let score = 0;
+    let health = 80;
+
+    function updateDashboard() {
+      document.getElementById('score-val').innerText = score;
+      document.getElementById('health-val').innerText = health + '%';
+    }
+
+    function checkBin(selectedType) {
+      const item = items[currentItemIdx];
+      const feedbackEl = document.getElementById('bin-feedback');
+      
+      if (selectedType === item.type) {
+        score += 10;
+        health = Math.min(100, health + 5);
+        feedbackEl.className = "feedback correct";
+        feedbackEl.innerText = "Correto! O item " + item.name + " vai para a lixeira de " + selectedType.toUpperCase() + ".";
+      } else {
+        health = Math.max(0, health - 10);
+        feedbackEl.className = "feedback wrong";
+        feedbackEl.innerText = "Incorreto. " + item.name + " pertence à lixeira de " + item.type.toUpperCase() + ".";
+      }
+
+      updateDashboard();
+      
+      // Próximo item
+      currentItemIdx = (currentItemIdx + 1) % items.length;
+      document.getElementById('current-item').innerText = items[currentItemIdx].name;
+    }
+
+    function checkQuiz(optionIdx) {
+      const feedbackEl = document.getElementById('quiz-feedback');
+      if (optionIdx === 1) {
+        score += 15;
+        health = Math.min(100, health + 5);
+        feedbackEl.className = "feedback correct";
+        feedbackEl.innerText = "Excelente! Economizar energia reduz o impacto ambiental da cidade.";
+      } else {
+        health = Math.max(0, health - 10);
+        feedbackEl.className = "feedback wrong";
+        feedbackEl.innerText = "Atenção: Desperdiçar energia impacta diretamente a saúde ambiental da cidade.";
+      }
+      updateDashboard();
+    }
+  </script>
+</body>
+</html>
